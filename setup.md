@@ -743,3 +743,17 @@ The progression should be roughly:
 ```
 
 **Current status: infrastructure complete; ready to start Experiment 1.**
+
+The quick version
+
+Every time you're finished:
+
+1. Git push
+      ↓
+2. scancel JOB_ID
+      ↓
+3. Ctrl+C SSH tunnel
+      ↓
+4. exit ORCHARD
+      ↓
+5. Close VS Code/terminals
