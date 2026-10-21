@@ -757,3 +757,36 @@ Every time you're finished:
 4. exit ORCHARD
       ↓
 5. Close VS Code/terminals
+
+---
+
+## Run TransformerLens over Skills files
+
+Copy or clone this repository onto ORCHARD, then pass either individual Skill files
+or a directory. Directories are searched recursively for `SKILL.md` and
+`*.SKILL.md`.
+
+```bash
+sbatch run_activations.slurm /path/to/skills
+```
+
+You can pass several inputs and options after the script name:
+
+```bash
+sbatch run_activations.slurm \
+  /path/to/first/SKILL.md /path/to/more-skills \
+  --model openai-community/gpt2 \
+  --output-dir outputs
+```
+
+Monitor the batch job and read its log:
+
+```bash
+squeue -u "$USER"
+cat skill_activations_<JOB_ID>.out
+```
+
+The runner requires CUDA by default, splits files that exceed the model context
+window, and writes one `.pt` activation file per chunk plus `outputs/manifest.json`.
+Each `.pt` file contains token IDs, readable tokens, and the residual-stream input
+and output activations for every transformer layer.
