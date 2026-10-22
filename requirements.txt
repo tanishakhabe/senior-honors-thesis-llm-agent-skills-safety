@@ -1,0 +1,9 @@
+# Core activation extraction dependencies
+torch
+transformer-lens
+
+# Notebook analysis and visualization
+jupyterlab
+numpy
+pandas
+matplotlib

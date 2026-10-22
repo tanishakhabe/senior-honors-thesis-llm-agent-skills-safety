@@ -99,8 +99,6 @@ def main() -> None:
         return (
             name.endswith("hook_resid_pre")
             or name.endswith("hook_resid_post")
-            or name.endswith("hook_in")
-            or name.endswith("hook_out")
         )
 
     manifest: list[dict[str, object]] = []
