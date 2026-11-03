@@ -42,9 +42,9 @@ From your Mac:
 
 ```
 gcloud compute ssh orchard-login-001 \
-  --zone "us-central1-c" \
-  --project "cmu-gpu-cloud" \
-  --tunnel-through-iap
+  --zone us-central1-c \
+  --project cmu-gpu-cloud \
+  --tunnel-through-iap
 ```
 
 You successfully reached:

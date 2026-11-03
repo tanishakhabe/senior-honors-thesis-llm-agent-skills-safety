@@ -9,7 +9,7 @@
 set -euo pipefail
 
 source "$HOME/transformer-lens-env/bin/activate"
-cd "$SLURM_SUBMIT_DIR"
+cd "${SLURM_SUBMIT_DIR:?Submit this job from the transformer-lens repository}"
 
 if [ "$#" -eq 0 ]; then
     echo "Usage: sbatch run_activations.slurm SKILLS_PATH [SKILLS_PATH ...] [options]" >&2

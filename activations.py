@@ -32,6 +32,8 @@ def parse_args() -> argparse.Namespace:
         "--allow-cpu", action="store_true",
         help="Run without CUDA; by default a missing GPU is an error",
     )
+    parser.add_argument("--capture-attention", action="store_true",
+                        help="Capture and validate per-layer attention probabilities")
     return parser.parse_args()
 
 
@@ -88,17 +90,24 @@ def main() -> None:
     )
     model.eval()
     model_context = int(model.cfg.n_ctx)
-    chunk_size = args.max_tokens or model_context
+    chunk_size = model_context if args.max_tokens is None else args.max_tokens
     if chunk_size < 1 or chunk_size > model_context:
         raise ValueError(
             f"--max-tokens must be between 1 and the model context length "
             f"({model_context})"
         )
 
+    attention_hooks = sorted(name for name in model.hook_dict if name.endswith("hook_pattern"))
+    if args.capture_attention and not attention_hooks:
+        raise RuntimeError("No hook_pattern hooks found in this installed model adapter")
+    if args.capture_attention:
+        print(f"Attention hooks: {attention_hooks}")
+
     def is_residual_hook(name: str) -> bool:
         return (
             name.endswith("hook_resid_pre")
             or name.endswith("hook_resid_post")
+            or (args.capture_attention and name in attention_hooks)
         )
 
     manifest: list[dict[str, object]] = []
@@ -126,6 +135,18 @@ def main() -> None:
             if not activations:
                 raise RuntimeError("No residual-stream hooks were captured")
 
+            if args.capture_attention:
+                for name in attention_hooks:
+                    if name not in activations:
+                        raise RuntimeError(f"Missing attention hook: {name}")
+                    pattern = activations[name]
+                    if pattern.ndim != 4 or pattern.shape[0] != 1 or tuple(pattern.shape[-2:]) != (len(chunk), len(chunk)):
+                        raise RuntimeError(f"Unexpected attention shape for {name}: {pattern.shape}")
+                    if not torch.isfinite(pattern).all() or (pattern < -1e-5).any():
+                        raise RuntimeError(f"Invalid attention probabilities: {name}")
+                    if not torch.allclose(pattern.float().sum(-1), torch.ones_like(pattern.float().sum(-1)), atol=0.02, rtol=0.02):
+                        raise RuntimeError(f"Attention rows do not sum to one: {name}")
+
             output_file = args.output_dir / f"{stem}.chunk-{chunk_index:04d}.pt"
             torch.save(
                 {
@@ -144,7 +165,7 @@ def main() -> None:
                     "chunk_index": chunk_index,
                     "token_offset": chunk_index * chunk_size,
                     "token_count": len(chunk),
-                    "output_file": str(output_file),
+                    "output_file": str(output_file.resolve()),
                     "activation_names": sorted(activations),
                 }
             )
@@ -169,6 +190,9 @@ def main() -> None:
                 "dtype": args.dtype,
                 "model_context": model_context,
                 "chunk_size": chunk_size,
+                "capture_attention": args.capture_attention,
+                "attention_hooks": attention_hooks if args.capture_attention else [],
+                "torch_version": str(torch.__version__),
                 "transformer_lens_version": package_version("transformer-lens"),
                 "files": manifest,
             },
