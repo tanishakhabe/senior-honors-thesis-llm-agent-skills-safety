@@ -75,3 +75,6 @@ secrets/
 *.pfx
 .netrc
 .pypirc
+
+# Generated activation tensors
+experiments/orchard-pilot-20261103/results/**/*.pt
