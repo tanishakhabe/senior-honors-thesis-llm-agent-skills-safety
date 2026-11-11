@@ -1,0 +1,87 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="1690" viewBox="0 0 1400 1690"><defs><marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10" fill="none" stroke="#62748b" stroke-width="1.5"/></marker></defs><rect width="1400" height="1690" fill="#f6f8fc"/><style>text{font-family:Arial,Helvetica,sans-serif;fill:#203149}.title{font-size:34px;font-weight:700}.sub{font-size:17px;fill:#62748b}.heading{font-size:20px;font-weight:700}.body{font-size:18px}</style>
+<text x="60" y="65" class="title" text-anchor="start">Current data pipeline</text>
+<text x="60" y="98" class="sub" text-anchor="start">Frontend pilot · November 4, 2026 · Solid = completed run; dashed = optional workflow</text>
+<text x="60" y="150" class="heading" text-anchor="start">1  LOCAL RESEARCH INPUTS</text>
+<rect x="60" y="175" width="520" height="85" rx="12" fill="#ffffff" stroke="#c7d4e4" stroke-width="2"/>
+<text x="320.0" y="210.5" class="body" text-anchor="middle">Benign frontend-design/SKILL.md</text>
+<text x="320.0" y="236.5" class="body" text-anchor="middle">1,751 tokens</text>
+<rect x="620" y="175" width="650" height="85" rx="12" fill="#ffffff" stroke="#c7d4e4" stroke-width="2"/>
+<text x="945.0" y="210.5" class="body" text-anchor="middle">Adversarial copy + appended response override</text>
+<text x="945.0" y="236.5" class="body" text-anchor="middle">1,792 tokens</text>
+<text x="60" y="291" class="sub" text-anchor="start">Skill text is read as data; instructions are never executed. Dataset assembly is manual.</text>
+<path d="M320,260 L460,350" fill="none" stroke="#62748b" stroke-width="2" marker-end="url(#arrow)"/>
+<path d="M945,260 L460,350" fill="none" stroke="#62748b" stroke-width="2" marker-end="url(#arrow)"/>
+<text x="60" y="331" class="heading" text-anchor="start">2  ORCHARD GPU EXTRACTION</text>
+<rect x="60" y="350" width="800" height="75" rx="12" fill="#ffffff" stroke="#c7d4e4" stroke-width="2"/>
+<text x="460.0" y="380.5" class="body" text-anchor="middle">run_activations.slurm → activations.py</text>
+<text x="460.0" y="406.5" class="body" text-anchor="middle">Slurm GPU job · Python virtual environment</text>
+<path d="M460,425 L460,450" fill="none" stroke="#62748b" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="60" y="450" width="800" height="75" rx="12" fill="#ffffff" stroke="#c7d4e4" stroke-width="2"/>
+<text x="460.0" y="480.5" class="body" text-anchor="middle">Discover files → read UTF-8 → GPT-2 tokenizer</text>
+<text x="460.0" y="506.5" class="body" text-anchor="middle">Tokenize without truncation</text>
+<path d="M460,525 L460,550" fill="none" stroke="#62748b" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="60" y="550" width="800" height="105" rx="12" fill="#ffffff" stroke="#c7d4e4" stroke-width="2"/>
+<text x="460.0" y="582.5" class="body" text-anchor="middle">Split into independent contexts · maximum 1,024 tokens</text>
+<text x="460.0" y="608.5" class="body" text-anchor="middle">Benign: 1,024 + 727 · Adversarial: 1,024 + 768</text>
+<text x="460.0" y="634.5" class="body" text-anchor="middle">Each chunk starts fresh; no context passes between chunks</text>
+<path d="M460,655 L460,680" fill="none" stroke="#62748b" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="60" y="680" width="800" height="75" rx="12" fill="#ffffff" stroke="#c7d4e4" stroke-width="2"/>
+<text x="460.0" y="710.5" class="body" text-anchor="middle">TransformerBridge + openai-community/gpt2</text>
+<text x="460.0" y="736.5" class="body" text-anchor="middle">CUDA · float32 · inference mode</text>
+<path d="M460,755 L460,780" fill="none" stroke="#62748b" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="60" y="780" width="800" height="75" rx="12" fill="#ffffff" stroke="#c7d4e4" stroke-width="2"/>
+<text x="460.0" y="810.5" class="body" text-anchor="middle">Capture residual stream before and after each layer</text>
+<text x="460.0" y="836.5" class="body" text-anchor="middle">12 layers · cache tensors on CPU</text>
+<path d="M860,717 L945,717" fill="none" stroke="#62748b" stroke-width="2" marker-end="url(#arrow)" stroke-dasharray="7 5"/>
+<rect x="945" y="665" width="395" height="130" rx="12" fill="#fff7e6" stroke="#b7791f" stroke-width="2" stroke-dasharray="7 5"/>
+<text x="1142.5" y="697.0" class="body" text-anchor="middle">Optional: --capture-attention</text>
+<text x="1142.5" y="723.0" class="body" text-anchor="middle">Capture hook_pattern</text>
+<text x="1142.5" y="749.0" class="body" text-anchor="middle">Validate shapes, probabilities</text>
+<text x="1142.5" y="775.0" class="body" text-anchor="middle">and attention row sums</text>
+<path d="M1142,795 L1142,855" fill="none" stroke="#62748b" stroke-width="2" marker-end="url(#arrow)" stroke-dasharray="7 5"/>
+<rect x="945" y="855" width="395" height="175" rx="12" fill="#fff7e6" stroke="#b7791f" stroke-width="2" stroke-dasharray="7 5"/>
+<text x="1142.5" y="909.5" class="body" text-anchor="middle">Separate attention-enabled run</text>
+<text x="1142.5" y="935.5" class="body" text-anchor="middle">frontend_skill_pilot.ipynb</text>
+<text x="1142.5" y="961.5" class="body" text-anchor="middle">Saves residual_endpoint_norms.png</text>
+<text x="1142.5" y="987.5" class="body" text-anchor="middle">and final_token_attention.png</text>
+<text x="60" y="910" class="heading" text-anchor="start">3  SAVED ARTIFACTS</text>
+<path d="M350,855 L260,935" fill="none" stroke="#62748b" stroke-width="2" marker-end="url(#arrow)"/>
+<path d="M570,855 L690,935" fill="none" stroke="#62748b" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="60" y="935" width="390" height="120" rx="12" fill="#ffffff" stroke="#c7d4e4" stroke-width="2"/>
+<text x="255.0" y="962.0" class="body" text-anchor="middle">4 .pt files · one per chunk</text>
+<text x="255.0" y="988.0" class="body" text-anchor="middle">Token IDs, readable tokens, activations</text>
+<text x="255.0" y="1014.0" class="body" text-anchor="middle">Model, source path, chunk index</text>
+<text x="255.0" y="1040.0" class="body" text-anchor="middle">and token offset</text>
+<rect x="475" y="935" width="400" height="120" rx="12" fill="#ffffff" stroke="#c7d4e4" stroke-width="2"/>
+<text x="675.0" y="962.0" class="body" text-anchor="middle">manifest.json</text>
+<text x="675.0" y="988.0" class="body" text-anchor="middle">Lengths, boundaries, paths, versions</text>
+<text x="675.0" y="1014.0" class="body" text-anchor="middle">Model, dtype and device</text>
+<text x="675.0" y="1040.0" class="body" text-anchor="middle">capture_attention = false</text>
+<path d="M255,1055 L460,1100" fill="none" stroke="#62748b" stroke-width="2" marker-end="url(#arrow)"/>
+<path d="M675,1055 L460,1100" fill="none" stroke="#62748b" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="60" y="1100" width="815" height="85" rx="12" fill="#ffffff" stroke="#c7d4e4" stroke-width="2"/>
+<text x="467.5" y="1135.5" class="body" text-anchor="middle">Artifacts available locally</text>
+<text x="467.5" y="1161.5" class="body" text-anchor="middle">experiments/orchard-pilot-20261103/results/debug-164876/</text>
+<text x="60" y="1240" class="heading" text-anchor="start">4  CPU ANALYSIS · NO GPU OR MODEL DOWNLOAD REQUIRED</text>
+<path d="M460,1185 L460,1265" fill="none" stroke="#62748b" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="60" y="1265" width="815" height="100" rx="12" fill="#ffffff" stroke="#c7d4e4" stroke-width="2"/>
+<text x="467.5" y="1295.0" class="body" text-anchor="middle">frontend_activation_comparison.ipynb</text>
+<text x="467.5" y="1321.0" class="body" text-anchor="middle">Read manifest + load tensors with weights_only=True</text>
+<text x="467.5" y="1347.0" class="body" text-anchor="middle">Check finite activations and matching chunk boundaries</text>
+<path d="M460,1365 L460,1390" fill="none" stroke="#62748b" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="60" y="1390" width="815" height="100" rx="12" fill="#ffffff" stroke="#c7d4e4" stroke-width="2"/>
+<text x="467.5" y="1420.0" class="body" text-anchor="middle">Input-length chart · shared-prefix activation sanity check</text>
+<text x="467.5" y="1446.0" class="body" text-anchor="middle">Inspect tokens at divergence</text>
+<text x="467.5" y="1472.0" class="body" text-anchor="middle">Final-token cosine and relative L2 distances by layer</text>
+<rect x="945" y="1265" width="395" height="225" rx="12" fill="#ffffff" stroke="#c7d4e4" stroke-width="2"/>
+<text x="1142.5" y="1318.5" class="body" text-anchor="middle">CURRENT INTERPRETATION</text>
+<text x="1142.5" y="1344.5" class="body" text-anchor="middle">Descriptive comparison of one pair</text>
+<text x="1142.5" y="1370.5" class="body" text-anchor="middle">Length, wording and position</text>
+<text x="1142.5" y="1396.5" class="body" text-anchor="middle">are confounds</text>
+<text x="1142.5" y="1422.5" class="body" text-anchor="middle">No behavioral attack-success</text>
+<text x="1142.5" y="1448.5" class="body" text-anchor="middle">or generalization evaluation</text>
+<path d="M875,1440 L945,1440" fill="none" stroke="#62748b" stroke-width="2" marker-end="url(#arrow)"/>
+<text x="60" y="1550" class="sub" text-anchor="start">The comparison notebook displays charts inline. The optional attention notebook saves PNGs.</text>
+<text x="60" y="1582" class="sub" text-anchor="start">Raw inputs and generated results are ignored by Git and transferred separately between machines.</text>
+<text x="60" y="1630" class="sub" text-anchor="start">Verified against extraction code, the saved run manifest and the current comparison notebook.</text>
+</svg>
